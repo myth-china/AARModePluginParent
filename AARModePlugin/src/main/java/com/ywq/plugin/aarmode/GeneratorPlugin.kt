@@ -15,9 +15,7 @@ class GeneratorPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         generatePublishScript(target)
-        target.afterEvaluate {
-            generateSubstitutes(target)
-        }
+        generateSubstitutes(target)
     }
 
     private fun generatePublishScript(target: Project) {
@@ -28,12 +26,20 @@ class GeneratorPlugin : Plugin<Project> {
         val genPublishWriter = FileWriter(target.rootDir.absolutePath + "/" + "publish.sh", false)
 
         target.subprojects {
-            val parentName = PathHelper.getParentName(project)
-            val parentPath = if (parentName.isNotEmpty()) ":$parentName" else ""
-            genPublishWriter.write("./gradlew $parentPath:${project.name}:publishToMavenLocal -P${PublisherPlugin.USE_FLAG}\n")
+            project.afterEvaluate {
+                if (!project.plugins.hasPlugin("com.android.library")) {
+                    return@afterEvaluate
+                }
+
+                val parentName = PathHelper.getParentName(project)
+                val parentPath = if (parentName.isNotEmpty()) ":$parentName" else ""
+                genPublishWriter.write("./gradlew $parentPath:${project.name}:publishToMavenLocal -P${PublisherPlugin.USE_FLAG}\n")
+            }
         }
 
-        genPublishWriter.close()
+        target.gradle.projectsEvaluated {
+            genPublishWriter.close()
+        }
     }
 
     private fun generateSubstitutes(target: Project) {
@@ -41,25 +47,32 @@ class GeneratorPlugin : Plugin<Project> {
             return
         }
 
+        if (target.plugins.isEmpty()) {
+            return
+        }
+
         val genSubstituteWriter =
             FileWriter(target.rootDir.absolutePath + "/" + substituteFileName, false)
 
         val substitutes = Substitutes()
-        var projectCounter = 0
 
         target.subprojects {
-            projectCounter++
             project.afterEvaluate {
+
+                if (!project.plugins.hasPlugin("com.android.library")) {
+                    return@afterEvaluate
+                }
+
                 val parentName = PathHelper.getParentName(project)
                 val parentPath = if (parentName.isNotEmpty()) ":$parentName" else ""
                 val notation = "${project.group}:${project.name}:${project.version}"
                 substitutes.configs.add(Config("$parentPath:${project.name}", notation, false))
-                genSubstituteWriter.write(Gson().toJson(substitutes))
-                projectCounter--
-                if (projectCounter == 0) {
-                    genSubstituteWriter.close()
-                }
             }
+        }
+
+        target.gradle.projectsEvaluated {
+            genSubstituteWriter.write(Gson().toJson(substitutes))
+            genSubstituteWriter.close()
         }
     }
 }

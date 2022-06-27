@@ -15,4 +15,4 @@ apply(plugin = "AARModeSettings")
 
 rootProject.name = "AARModePluginTester"
 
-includeX("liba")
+include(":liba")

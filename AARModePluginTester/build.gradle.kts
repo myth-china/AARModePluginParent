@@ -20,7 +20,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     implementationX(projectX(":liba"))
-//    implementationX("com.ywq.test:liba:1.0-SNAPSHOT")
+//    implementation("com.ywq.test:liba:1.0-SNAPSHOT")
 }
 
 tasks.getByName<Test>("test") {
@@ -32,5 +32,6 @@ apply(plugin = "AARModeGenerator")
 allprojects {
     project.afterEvaluate {
         project.apply(plugin = "AARModePublisher")
+//        project.apply(plugin = "AARModeProject")
     }
 }

@@ -1,0 +1,10 @@
+{
+  "open": true,
+  "configs": [
+    {
+      "name": ":liba",
+      "notation": "com.ywq.test:liba:1.0-SNAPSHOT",
+      "substitute": true
+    }
+  ]
+}

@@ -30,6 +30,10 @@ class PublisherPlugin : Plugin<Project> {
                 return
             }
 
+            if (!project.plugins.hasPlugin("com.android.library")) {
+                return
+            }
+
             if (plugins.hasPlugin("maven-publish")) {
                 return
             }

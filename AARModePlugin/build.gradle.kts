@@ -20,7 +20,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
     // https://mvnrepository.com/artifact/com.android.tools.build/gradle
-    compileOnly("com.android.tools.build:gradle:4.2.2")
+    implementation("com.android.tools.build:gradle:4.1.0")
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.8.9")
 
@@ -51,6 +51,13 @@ gradlePlugin {
             displayName = "AARModeSettings"
             description = "Aar mode settings."
             implementationClass = "com.ywq.plugin.aarmode.SettingsPlugin"
+        }
+
+        create("AARModeProject") {
+            id = "AARModeProject"
+            displayName = "AARModeProject"
+            description = "Aar mode project."
+            implementationClass = "com.ywq.plugin.aarmode.ProjectPlugin"
         }
     }
 }

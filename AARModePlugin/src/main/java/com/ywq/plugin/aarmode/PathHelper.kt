@@ -5,10 +5,10 @@ import org.gradle.api.Project
 object PathHelper {
 
     fun getParentName(project: Project): String {
-        return if (project.rootProject.parent == null) {
+        return if (project.parent?.parent == null) {
             ""
         } else {
-            project.rootProject.name
+            project.parent?.name ?: ""
         }
     }
 }
